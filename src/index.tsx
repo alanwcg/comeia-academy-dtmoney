@@ -24,7 +24,7 @@ createServer({
           title: 'Hamburger',
           type: 'withdraw',
           category: 'Alimentação',
-          amount: 6000,
+          amount: 60,
           createdAt: new Date('2021-08-02 12:00:00'),
         },
       ]

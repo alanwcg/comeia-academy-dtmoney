@@ -31,6 +31,14 @@ export const Container = styled.div`
         border-top-right-radius: 0.25rem;
         border-bottom-right-radius: 0.25rem;
       }
+
+      &.deposit {
+        color: ${({ theme }) => theme.colors.green};
+      }
+
+      &.withdraw {
+        color: ${({ theme }) => theme.colors.red};
+      }
     }
   }
 `;
