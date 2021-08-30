@@ -27,6 +27,10 @@ export const Container = styled.form`
     & + input {
       margin-top: 1rem;
     }
+
+    &.hasError {
+      border-color: ${({ theme }) => theme.colors.red};
+    }
   }
 
   button[type="submit"] {
@@ -47,6 +51,13 @@ export const Container = styled.form`
       filter: brightness(0.9);
     }
   }
+`;
+
+export const Error = styled.span`
+  display: block;
+  font-size: 0.75rem;
+  color: ${({ theme }) => theme.colors.red};
+  margin-bottom: 0.5rem;
 `;
 
 export const TransactionTypeContainer = styled.div`

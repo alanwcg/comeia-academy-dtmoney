@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { ThemeProvider } from 'styled-components';
 
 import theme from './styles/theme';
@@ -12,13 +12,13 @@ import { TransactionsProvider } from './hooks/useTransactions';
 export function App() {
   const [isNewTransactionModalOpen, setIsNewTransactionModalOpen] = useState(false);
 
-  function handleOpenNewTransactionModal() {
+  const handleOpenNewTransactionModal = useCallback(() => {
     setIsNewTransactionModalOpen(true);
-  }
+  }, []);
 
-  function handleCloseNewTransactionModal() {
+  const handleCloseNewTransactionModal = useCallback(() => {
     setIsNewTransactionModalOpen(false);
-  }
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>

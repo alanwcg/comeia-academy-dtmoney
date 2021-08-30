@@ -1,5 +1,8 @@
-import { useState, FormEvent } from 'react';
+import { useState } from 'react';
 import Modal from 'react-modal';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from "yup";
 
 import incomeImg from '../../assets/income.svg';
 import outcomeImg from '../../assets/outcome.svg';
@@ -11,6 +14,7 @@ import {
   Container,
   TransactionTypeContainer,
   RadioBox,
+  Error,
 } from './styles';
 
 interface NewTransactionModalProps {
@@ -18,33 +22,41 @@ interface NewTransactionModalProps {
   onRequestClose: () => void;
 }
 
+interface FormData {
+  title: string;
+  amount: number;
+  category: string;
+}
+
 type TransactionType = 'deposit' | 'withdraw';
+
+const schema = yup.object().shape({
+  title: yup.string().required('Título é obrigatório'),
+  amount: yup.string().required('Preço é obrigatório'),
+  category: yup.string().required('Categoria é obrigatória')
+});
 
 export function NewTransactionModal({
   isOpen,
   onRequestClose,
 }: NewTransactionModalProps) {
   const { createTransaction } = useTransactions();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm({
+    resolver: yupResolver(schema),
+  });
+  console.log(errors);
 
-  const [title, setTitle] = useState('');
-  const [amount, setAmount] = useState(0);
   const [type, setType] = useState<TransactionType>('deposit');
-  const [category, setCategory] = useState('');
 
-  async function handleCreateNewTransaction(event: FormEvent) {
-    event.preventDefault();
-
+  async function handleCreateNewTransaction(data: FormData) {
     await createTransaction({
-      title,
-      amount,
+      ...data,
       type,
-      category,
     });
 
-    setTitle('');
-    setAmount(0);
     setType('deposit');
-    setCategory('');
+
+    reset();
 
     onRequestClose();
   }
@@ -64,21 +76,23 @@ export function NewTransactionModal({
         <img src={closeImg} alt="Fechar modal" />
       </button>
 
-      <Container onSubmit={handleCreateNewTransaction}>
+      <Container onSubmit={handleSubmit(handleCreateNewTransaction)}>
         <h2>Cadastrar transação</h2>
 
         <input
+          className={errors.title && 'hasError'}
           placeholder="Título"
-          value={title}
-          onChange={event => setTitle(event.target.value)}
+          {...register('title')}
         />
+        {errors.title && <Error>{errors.title.message}</Error>}
 
         <input
+          className={errors.amount && 'hasError'}
           type="number"
           placeholder="Preço"
-          value={amount}
-          onChange={event => setAmount(Number(event.target.value))}
+          {...register('amount')}
         />
+        {errors.amount && <Error>{errors.amount.message}</Error>}
 
         <TransactionTypeContainer>
           <RadioBox
@@ -103,10 +117,11 @@ export function NewTransactionModal({
         </TransactionTypeContainer>
 
         <input
+          className={errors.category && 'hasError'}
           placeholder="Categoria"
-          value={category}
-          onChange={event => setCategory(event.target.value)}
+          {...register('category')}
         />
+        {errors.category && <Error>{errors.category.message}</Error>}
 
         <button type="submit">
           Cadastrar

@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useCallback,
+} from 'react';
 
 import { api } from '../services/api';
 
@@ -29,13 +36,13 @@ export const TransactionsContext = createContext<TransactionsContextData>(
 export function TransactionsProvider({ children }: TransactionsProviderProps) {
   const [transactions, setTransaction] = useState<Transaction[]>([]);
 
-  async function createTransaction(transactionInput: TransactionInput) {
+  const createTransaction = useCallback(async (transactionInput: TransactionInput) => {
     const response = await api.post('/transactions', transactionInput);
 
     const { transaction } = response.data;
 
     setTransaction([...transactions, transaction]);
-  }
+  }, [transactions]);
 
   useEffect(() => {
     async function loadTransactions() {
